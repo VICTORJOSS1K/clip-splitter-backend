@@ -120,6 +120,7 @@ async function processJob(jobId, { url, clipLength, format }) {
     job.progress = 5;
     const sourcePath = path.join(dir, 'source.%(ext)s');
     await run('yt-dlp', [
+      '--cookies', 'cookies.txt',
       '-f', YTDLP_FORMAT,
       '--merge-output-format', 'mp4',
       '--no-playlist',
