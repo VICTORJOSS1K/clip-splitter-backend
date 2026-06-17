@@ -120,13 +120,23 @@ async function processJob(jobId, { url, clipLength, format }) {
     job.progress = 5;
     const sourcePath = path.join(dir, 'source.%(ext)s');
     await run('yt-dlp', [
-      '--cookies', 'cookies.txt',
-      '-f', YTDLP_FORMAT,
-      '--merge-output-format', 'mp4',
-      '--no-playlist',
-      '-o', sourcePath,
-      url,
-    ], {
+  '-f', YTDLP_FORMAT,
+  '--no-playlist',
+  '--merge-output-format', 'mp4',
+
+  // 🔥 FIX ANTI-BLOCK YOUTUBE
+  '--user-agent', 'Mozilla/5.0',
+  '--extractor-args', 'youtube:player_client=android',
+
+  '--force-ipv4',
+  '--no-check-certificate',
+
+  // cookies opcional (si existen)
+  ...(fs.existsSync('cookies.txt') ? ['--cookies', 'cookies.txt'] : []),
+
+  '-o', sourcePath,
+  url,
+], {
       onStderr: (s) => {
         const m = s.match(/(\d+(?:\.\d+)?)%/);
         if (m) {
